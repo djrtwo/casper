@@ -152,6 +152,11 @@ def dependency_transactions(viper_rlp_decoder_tx, sig_hasher_tx, purity_checker_
 
 
 @pytest.fixture
+def dependency_raw_transactions():
+    return [VIPER_RLP_DECODER_TX_HEX, SIG_HASHER_TX_HEX, PURITY_CHECKER_TX_HEX]
+
+
+@pytest.fixture
 def casper_address(dependency_transactions, base_sender_privkey):
     mock_tx = Transaction(
         len(dependency_transactions),
