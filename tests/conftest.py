@@ -175,9 +175,18 @@ def casper(casper_chain, casper_abi, casper_address):
 
 
 @pytest.fixture
+def casper_args(casper_config, sig_hasher_address, purity_checker_address):
+    return [
+        casper_config["epoch_length"], casper_config["withdrawal_delay"], casper_config["owner"],
+        sig_hasher_address, purity_checker_address, casper_config["base_interest_factor"],
+        casper_config["base_penalty_factor"], casper_config["min_deposit_size"]
+    ]
+
+
+@pytest.fixture
 def casper_chain(
         test_chain,
-        casper_config,
+        casper_args,
         casper_code,
         casper_ct,
         dependency_transactions,
@@ -212,11 +221,7 @@ def casper_chain(
     # otherwise, viper compiler cannot properly embed RLP decoder address
     casper_bytecode = compiler.compile(casper_code)
 
-    init_args = casper_ct.encode_constructor_arguments([
-        casper_config["epoch_length"], casper_config["withdrawal_delay"], casper_config["owner"],
-        sig_hasher_address, purity_checker_address, casper_config["base_interest_factor"],
-        casper_config["base_penalty_factor"], casper_config["min_deposit_size"]
-    ])
+    init_args = casper_ct.encode_constructor_arguments(casper_args)
 
     deploy_code = casper_bytecode + (init_args)
     casper_tx = Transaction(
